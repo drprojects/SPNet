@@ -34,8 +34,9 @@ cd ../../
 
 pip install tensorboardX h5py pyyaml pillow plyfile torchnet transforms3d scikit-learn tqdm 
 
-
-sh tool/sh_test.sh s3dis 20220121 config/spnet.yaml 850
+# Rate controls the pts/sp ratio for FPS and k-means
+RATE=0.0069
+sh tool/sh_test.sh s3dis 20220121 config/spnet.yaml 850 $RATE
 
 ```
 

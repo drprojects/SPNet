@@ -26,5 +26,5 @@ $PYTHON tool/test.py \
     --config ${config} \
     --model_path ${model_path} \
     --epoch ${epoch} \
-    --save_folder ${save_folder} 2>&1 | tee ${model_log}/test-$epoch-$now.log \
-    --rate ${rate}
+    --rate ${rate} \
+    --save_folder ${save_folder} 2>&1 | tee ${model_log}/test-$epoch-$now.log

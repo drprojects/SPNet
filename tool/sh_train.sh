@@ -25,6 +25,6 @@ cp tool/sh_train.sh tool/train.py ${config} ${exp_dir}
 $PYTHON tool/train.py \
     --config ${config} \
     --model_path ${model_path} \
-    --save_path=${exp_dir} 2>&1 | tee ${model_log}/train-$now.log \
-    --rate ${rate}
+    --rate ${rate} \
+    --save_path=${exp_dir} 2>&1 | tee ${model_log}/train-$now.log
 
