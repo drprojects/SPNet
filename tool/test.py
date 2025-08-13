@@ -402,8 +402,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
         # Accumulating superpoint-wise labels for later oracle metrics
         # computation
         confusion_matrix_oracle.count_predicted(
-            onehot_label.squeeze().argmax(axis=0),
-            all_rec_label.squeeze().argmax(axis=0),
+            onehot_label.cpu().numpy().squeeze().argmax(axis=0),
+            all_rec_label.cpu().numpy().squeeze().argmax(axis=0),
             number_of_added_elements=1)
       
         spout = all_fea_dist
