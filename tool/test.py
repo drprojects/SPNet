@@ -511,26 +511,20 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                                                               loss_re_xyz_meter=loss_re_xyz_meter,
                                                               loss_re_label_meter=loss_re_label_meter,
                                                               loss_meter=loss_meter))
-        if i > 3:
-            logger.info(".......EXITING HERE.......")
-            break
 
     torch.cuda.synchronize()
     total_partition_and_inference_time = time.time() - start
 
     asa = confusion_matrix.get_overall_accuracy()
-    miou = confusion_matrix.get_average_intersection_union()
+    oracle_miou = confusion_matrix.get_average_intersection_union()
+    oracle_iou = confusion_matrix.get_intersection_union_per_class()
     br = BR_meter.value()[0]
     bp = BP_meter.value()[0]
-    oracle_oa = confusion_matrix_oracle.get_overall_accuracy()
-    oracle_miou = confusion_matrix_oracle.get_average_intersection_union()
-    oracle_iou = confusion_matrix_oracle.get_intersection_union_per_class()
     logger.info('Train result at epoch [{}/{}]: ASA/BR/BP {:.4f}/{:.4f}/{:.4f}'.format(epoch+1, args['epochs'], asa, br, bp))
     logger.info('cnt_room: {} cnt_sp: {} avg_sp: {}'.format(cnt_room, cnt_sp, 1.*cnt_sp/cnt_room))
     logger.info('cnt_sp_act: {} avg_sp_act: {}'.format(cnt_sp_act, 1.*cnt_sp_act/cnt_room))
     logger.info(f"ASA: {asa * 100:0.1f}")
-    logger.info(f"mIoU ???: {miou * 100:0.1f}")
-    logger.info(f"Oracle OA: {oracle_oa * 100:0.1f}")
+    logger.info(f"Oracle OA: {asa * 100:0.1f}")
     logger.info(f"Oracle mIoU: {oracle_miou * 100:0.1f}")
     logger.info(f"Oracle IoU:")
     for i, iou in enumerate(oracle_iou):
@@ -538,7 +532,6 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     logger.info(f"Oracle Confusion matrix:\n{confusion_matrix_oracle.confusion_matrix}")
     logger.info(f"FPS / k-means rate: {model.rate}")
     logger.info(f"Total partition time WITHOUT SPG CLASSIF: {total_partition_and_inference_time:0.3f}")
-    logger.info("!!!!!!!!! NOT ALL ROOOOOOOMS !!!!!!!!!")
 
 if __name__ == '__main__':
     main()
