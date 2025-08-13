@@ -511,6 +511,9 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                                                               loss_re_xyz_meter=loss_re_xyz_meter,
                                                               loss_re_label_meter=loss_re_label_meter,
                                                               loss_meter=loss_meter))
+        if i > 3:
+            logger.info(".......EXITING HERE.......")
+            break
 
     torch.cuda.synchronize()
     total_partition_and_inference_time = time.time() - start
@@ -535,6 +538,7 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     logger.info(f"Oracle Confusion matrix:\n{confusion_matrix_oracle.confusion_matrix}")
     logger.info(f"FPS / k-means rate: {model.rate}")
     logger.info(f"Total partition time WITHOUT SPG CLASSIF: {total_partition_and_inference_time:0.3f}")
+    logger.info("!!!!!!!!! NOT ALL ROOOOOOOMS !!!!!!!!!")
 
 if __name__ == '__main__':
     main()
