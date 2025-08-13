@@ -387,6 +387,9 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             ).items():
                 logger.info(f"{k:<20} | shape={v.shape} | min={v.min()} | max={v.max()}")
 
+            temp = all_rec_label.sum(dim=1).max()
+            logger.info(f"all_rec_label.sum(dim=1) | min={temp.min()} | max={temp.max()} | mean={temp.mean()}")
+
             input = input.cpu()
             gt = gt.cpu()
 
