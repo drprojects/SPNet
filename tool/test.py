@@ -90,12 +90,12 @@ def main():
     init()
     
     MODEL = importlib.import_module(args["arch"])  # import network module
-    logger.info("load {}.py success!".format(args["arch"]))
+    # logger.info("load {}.py success!".format(args["arch"]))
 
     model = MODEL.Network(cfg=args)
     
     total = sum([param.nelement() for param in model.parameters()])
-    logger.info("Number of params: %.2fM" % (total/1e6))
+#     logger.info("Number of params: %.2fM" % (total/1e6))
 
     
     if args["sync_bn"]:
@@ -125,18 +125,18 @@ def main():
         print('re_label_loss type error')
         exit()
 
-    logger.info("=> creating model ...")
-    logger.info("Classes: {}".format(args["classes"]))
+    # logger.info("=> creating model ...")
+    # logger.info("Classes: {}".format(args["classes"]))
     # logger.info(model)  # uncomment to print model
     model = model.cuda()
     
     model_path = os.path.join(args["model_path"], "train_epoch_{}.pth".format(args["epoch"]))
     if os.path.isfile(model_path):
-        logger.info("=> loading checkpoint '{}'".format(model_path))
+        # logger.info("=> loading checkpoint '{}'".format(model_path))
         checkpoint = torch.load(model_path)
         # model.load_state_dict(checkpoint['state_dict'], strict=False)
         model.load_state_dict(checkpoint['state_dict'], strict=True)
-        logger.info("=> loaded checkpoint '{}'".format(model_path))
+        # logger.info("=> loaded checkpoint '{}'".format(model_path))
     else:
         raise RuntimeError("=> no checkpoint found at '{}'".format(model_path))
     
@@ -276,8 +276,8 @@ def test(
             clouds_global,
             xyz
     ) in enumerate(test_loader):
-        logger.info("")
-        logger.info('name: {}'.format(fname[0]))
+        # logger.info("")
+        # logger.info('name: {}'.format(fname[0]))
         # fname: file name
         # edg_source: 1
         # edg_target: 1
@@ -373,10 +373,10 @@ def test(
             all_output = all_output.transpose((0, 2, 1))            # 1 x n x nclass -> 1 x nclass x n
             # logger.info('all_output: {}'.format(all_output.shape))
             all_rec_xyz = all_rec_xyz.transpose((0, 2, 1))          # 1 x n x 3 -> 1 x 3 x n
-#             logger.info('all_rec_xyz: {}'.format(all_rec_xyz.shape))                # 1 x 3 x n
+            # logger.info('all_rec_xyz: {}'.format(all_rec_xyz.shape))                # 1 x 3 x n
             all_rec_label = all_rec_label.transpose((0, 2, 1))      # 1 x n x nclass -> 1 x nclass x n
-#             logger.info('all_rec_label: {}'.format(all_rec_label.shape))            # 1 x nclass x n
-#             logger.info('all_fea_dist: {}'.format(all_fea_dist.shape))              # 1 x n x nc2p
+            # logger.info('all_rec_label: {}'.format(all_rec_label.shape))            # 1 x nclass x n
+            # logger.info('all_fea_dist: {}'.format(all_fea_dist.shape))              # 1 x n x nc2p
             
             gt = gt.cuda(non_blocking=True)
             onehot_label = label2one_hot(gt, args['classes'])
@@ -506,34 +506,34 @@ def test(
         t_h, t_m = divmod(t_m, 60)
         remain_time = '{:02d}:{:02d}:{:02d}'.format(int(t_h), int(t_m), int(t_s))
 
-        if args['use_semantic_loss']:
-            logger.info('Epoch: [{}/{}][{}/{}] '
-                            'Data {data_time.val:.3f} ({data_time.avg:.3f}) '
-                            'Batch {batch_time.val:.3f} ({batch_time.avg:.3f}) '
-                            'Remain {remain_time} '
-                            'LS_re_xyz {loss_re_xyz_meter.val:.4f} '
-                            'LS_re_label {loss_re_label_meter.val:.4f} '
-                            'LS_seg_label {loss_semantic_meter.val:.4f} '
-                            'Loss {loss_meter.val:.4f}'.format(epoch+1, args["epochs"], i + 1, len(test_loader),
-                                                              batch_time=batch_time, data_time=data_time,
-                                                              remain_time=remain_time,
-                                                              loss_re_xyz_meter=loss_re_xyz_meter,
-                                                              loss_re_label_meter=loss_re_label_meter,
-                                                              loss_semantic_meter=loss_semantic_meter,
-                                                              loss_meter=loss_meter))
-        else:
-            logger.info('Epoch: [{}/{}][{}/{}] '
-                            'Data {data_time.val:.3f} ({data_time.avg:.3f}) '
-                            'Batch {batch_time.val:.3f} ({batch_time.avg:.3f}) '
-                            'Remain {remain_time} '
-                            'LS_re_xyz {loss_re_xyz_meter.val:.4f} '
-                            'LS_re_label {loss_re_label_meter.val:.4f} '
-                            'Loss {loss_meter.val:.4f}'.format(epoch+1, args["epochs"], i + 1, len(test_loader),
-                                                              batch_time=batch_time, data_time=data_time,
-                                                              remain_time=remain_time,
-                                                              loss_re_xyz_meter=loss_re_xyz_meter,
-                                                              loss_re_label_meter=loss_re_label_meter,
-                                                              loss_meter=loss_meter))
+        # if args['use_semantic_loss']:
+        #     logger.info('Epoch: [{}/{}][{}/{}] '
+        #                     'Data {data_time.val:.3f} ({data_time.avg:.3f}) '
+        #                     'Batch {batch_time.val:.3f} ({batch_time.avg:.3f}) '
+        #                     'Remain {remain_time} '
+        #                     'LS_re_xyz {loss_re_xyz_meter.val:.4f} '
+        #                     'LS_re_label {loss_re_label_meter.val:.4f} '
+        #                     'LS_seg_label {loss_semantic_meter.val:.4f} '
+        #                     'Loss {loss_meter.val:.4f}'.format(epoch+1, args["epochs"], i + 1, len(test_loader),
+        #                                                       batch_time=batch_time, data_time=data_time,
+        #                                                       remain_time=remain_time,
+        #                                                       loss_re_xyz_meter=loss_re_xyz_meter,
+        #                                                       loss_re_label_meter=loss_re_label_meter,
+        #                                                       loss_semantic_meter=loss_semantic_meter,
+        #                                                       loss_meter=loss_meter))
+        # else:
+        #     logger.info('Epoch: [{}/{}][{}/{}] '
+        #                     'Data {data_time.val:.3f} ({data_time.avg:.3f}) '
+        #                     'Batch {batch_time.val:.3f} ({batch_time.avg:.3f}) '
+        #                     'Remain {remain_time} '
+        #                     'LS_re_xyz {loss_re_xyz_meter.val:.4f} '
+        #                     'LS_re_label {loss_re_label_meter.val:.4f} '
+        #                     'Loss {loss_meter.val:.4f}'.format(epoch+1, args["epochs"], i + 1, len(test_loader),
+        #                                                       batch_time=batch_time, data_time=data_time,
+        #                                                       remain_time=remain_time,
+        #                                                       loss_re_xyz_meter=loss_re_xyz_meter,
+        #                                                       loss_re_label_meter=loss_re_label_meter,
+        #                                                       loss_meter=loss_meter))
 
     torch.cuda.synchronize()
     total_partition_and_inference_time = time.time() - start
