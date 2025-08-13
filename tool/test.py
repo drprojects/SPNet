@@ -373,10 +373,14 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             all_rec_label = rec_label.detach().cpu().numpy()
             all_fea_dist = fea_dist.detach().cpu().numpy()
 
+            c = onehot_label.shape[1]
+            n = onehot_label.shape[2]
             m = all_c_idx.shape[1]
-            logger.info(f"n={n} | m={m}")
+            logger.info(f"n={n} | m={m} | c={c}")
+            logger.info(f"onehot_label.shape={onehot_label.shape} | onehot_label.min()={onehot_label.min()} | onehot_label.max()={onehot_label.max()}")
             logger.info(f"all_c_idx.shape={all_c_idx.shape} | all_c_idx.min()={all_c_idx.min()} | all_c_idx.max()={all_c_idx.max()}")
             logger.info(f"all_rec_label.shape={all_rec_label.shape} | all_c_idx.min()={all_rec_label.min()} | all_c_idx.max()={all_rec_label.max()}")
+            logger.info(f"all_output.shape={all_output.shape} | all_output.min()={all_output.min()} | all_output.max()={all_output.max()}")
 
             input = input.cpu()
             gt = gt.cpu()
