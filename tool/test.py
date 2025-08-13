@@ -379,6 +379,7 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             logger.info(f"n={n} | m={m} | c={c}")
             logger.info(f"onehot_label.shape={onehot_label.shape} | onehot_label.min()={onehot_label.min()} | onehot_label.max()={onehot_label.max()}")
             logger.info(f"all_c_idx.shape={all_c_idx.shape} | all_c_idx.min()={all_c_idx.min()} | all_c_idx.max()={all_c_idx.max()}")
+            logger.info(f"all_c2p_idx_base.shape={all_c2p_idx_base.shape} | all_c2p_idx_base.min()={all_c2p_idx_base.min()} | all_c2p_idx_base.max()={all_c2p_idx_base.max()}")
             logger.info(f"all_rec_label.shape={all_rec_label.shape} | all_c_idx.min()={all_rec_label.min()} | all_c_idx.max()={all_rec_label.max()}")
             logger.info(f"all_output.shape={all_output.shape} | all_output.min()={all_output.min()} | all_output.max()={all_output.max()}")
 
