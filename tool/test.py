@@ -294,7 +294,7 @@ def test(
         else:
             gt = labels[:, :, 1:].argmax(axis=2)
         input = torch.cat((xyz, clouds_global), dim=2)
-        logger.info('xyz: {}'.format(xyz.numpy().shape))    # 1 x n x 3
+        # logger.info('xyz: {}'.format(xyz.numpy().shape))    # 1 x n x 3
         # th = 500000
         th = 450000
         if input.size(1) >= th:
