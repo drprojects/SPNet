@@ -82,7 +82,8 @@ def init():
 
     logger = get_logger()
     os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(str(x) for x in args["test_gpu"])
-    logger.info(args)
+    # Uncomment to print the dictionary of args
+    # logger.info(args)
 
 
 def main():
