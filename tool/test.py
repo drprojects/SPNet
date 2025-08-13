@@ -490,7 +490,7 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                                                               loss_meter=loss_meter))
 
     torch.cuda.synchronize()
-    total_partition_and_inference_time = time.time()
+    total_partition_and_inference_time = time.time() - start
 
     asa = confusion_matrix.get_overall_accuracy()
     br = BR_meter.value()[0]
