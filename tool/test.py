@@ -46,13 +46,15 @@ def get_parser():
     parser.add_argument('--model_path', type=str, default=None, required=True, help='save path')
     parser.add_argument('--save_folder', type=str, default=None, required=True, help='save_folder path')
     parser.add_argument('--epoch', type=int, default=None, required=True, help='corresponding to the train_epoch_xx.pth')
+    parser.add_argument('--rate', type=float, default=0.0069, required=False, help='superpoint per point rate used for seeding FPS & k-means')
 
     args = parser.parse_args()
     cfg = yaml.safe_load(open(args.config, 'r'))
     cfg["model_path"] = args.model_path
     cfg["save_folder"] = args.save_folder
     cfg["epoch"] = args.epoch
-    
+    cfg["rate"] = args.rate
+
     print("#"*20)
     print("Parameters:")
     for ky in cfg.keys():
@@ -244,6 +246,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     max_iter = 1 * len(test_loader)
     cnt_room, cnt_sp, cnt_sp_act = 0, 0, 0
     cnt_sp_std = 0.
+    torch.cuda.synchronize()
+    start = time.time()
     for i, (fname, edg_source, edg_target, is_transition, labels, objects, clouds, clouds_global, xyz) in enumerate(test_loader): 
         logger.info('name: {}'.format(fname[0]))
         # fname: file name
@@ -289,7 +293,7 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                 logger.info('s_onehot_label: {} {}'.format(s_onehot_label.size(), s_onehot_label.type()))
                 with torch.no_grad():
                     _, c_idx, c2p_idx, c2p_idx_base, output, rec_xyz, rec_label, fea_dist, p_fea, sp_pred_lab, sp_pseudo_lab, sp_pseudo_lab_onehot = model(s_input, s_clouds.contiguous(), s_onehot_label, s_gt.unsqueeze(-1))
-                
+
                 c_idx = c_idx.cpu().numpy()                 # 1 x m'         val: 0,1,2,...,n'-1
                 c_idx += mov_n
                 
@@ -478,12 +482,17 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                                                               loss_re_label_meter=loss_re_label_meter,
                                                               loss_meter=loss_meter))
 
+    torch.cuda.synchronize()
+    total_partition_and_inference_time = time.time()
+
     asa = confusion_matrix.get_overall_accuracy()
     br = BR_meter.value()[0]
     bp = BP_meter.value()[0]
     logger.info('Train result at epoch [{}/{}]: ASA/BR/BP {:.4f}/{:.4f}/{:.4f}'.format(epoch+1, args['epochs'], asa, br, bp))
     logger.info('cnt_room: {} cnt_sp: {} avg_sp: {}'.format(cnt_room, cnt_sp, 1.*cnt_sp/cnt_room))
     logger.info('cnt_sp_act: {} avg_sp_act: {}'.format(cnt_sp_act, 1.*cnt_sp_act/cnt_room))
+    logger.info(f"FPS / k-means rate: {model.rate}")
+    logger.info(f"Total partition time WITHOUT SPG CLASSIF: {total_partition_and_inference_time:0.3f}")
 
 if __name__ == '__main__':
     main()
