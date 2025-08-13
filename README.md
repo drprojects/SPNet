@@ -38,6 +38,12 @@ pip install tensorboardX h5py pyyaml pillow plyfile torchnet transforms3d scikit
 RATE=0.0069
 sh tool/sh_test.sh s3dis 20220121 config/spnet.yaml 850 $RATE
 
+
+for RATE in 0.0001 0.0005 0.001 0.005 0.007 0.01 0.05 0.1
+do
+    sh tool/sh_test.sh s3dis 20220121 config/spnet.yaml 850 $RATE
+done
+
 ```
 
 
