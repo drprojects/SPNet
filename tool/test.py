@@ -239,8 +239,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     
     BR_meter = tnt.meter.AverageValueMeter()
     BP_meter = tnt.meter.AverageValueMeter()
-    confusion_matrix = metrics.ConfusionMatrix(args['classes'])
-    confusion_matrix_oracle = metrics.ConfusionMatrix(args['classes'])
+    confusion_matrix = metrics.ConfusionMatrix(number_of_labels=args['classes'])
+    confusion_matrix_oracle = metrics.ConfusionMatrix(number_of_labels=args['classes'])
 
     model.eval()
     end = time.time()

@@ -11,7 +11,7 @@ class ConfusionMatrix:
     self.number_of_labels = number_of_labels
     self.confusion_matrix = np.zeros(shape=(self.number_of_labels,self.number_of_labels))
   def count_predicted(self, ground_truth, predicted, number_of_added_elements=1):
-    self.confusion_matrix[ground_truth][predicted] += number_of_added_elements
+    self.confusion_matrix[ground_truth, predicted] += number_of_added_elements
 
   def count_predicted_batch(self, ground_truth_vec, predicted): # added
     for i in range(ground_truth_vec.shape[0]):
