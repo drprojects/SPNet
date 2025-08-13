@@ -55,11 +55,12 @@ def get_parser():
     cfg["epoch"] = args.epoch
     cfg["rate"] = args.rate
 
-    print("#"*20)
-    print("Parameters:")
-    for ky in cfg.keys():
-        print('key: {} -> {}'.format(ky, cfg[ky]))
-    print("#"*20)
+    # Uncomment to print the config parameters...
+    # print("#"*20)
+    # print("Parameters:")
+    # for ky in cfg.keys():
+    #     print('key: {} -> {}'.format(ky, cfg[ky]))
+    # print("#"*20)
     return cfg
 
 def get_logger():
@@ -155,15 +156,23 @@ def main():
         print("data_name error")
         exit()
    
-    test_loader = torch.utils.data.DataLoader(test_data,
-                                               batch_size=args["test_batch_size"],
-                                               shuffle=False,
-                                               num_workers=8,
-                                               collate_fn=my_collate_s,
-                                               pin_memory=True,
-                                               drop_last=False)
+    test_loader = torch.utils.data.DataLoader(
+        test_data,
+        batch_size=args["test_batch_size"],
+        shuffle=False,
+        num_workers=8,
+        collate_fn=my_collate_s,
+        pin_memory=True,
+        drop_last=False)
 
-    test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, criterion_re_sp, args['epoch'])
+    test(
+        test_loader,
+        model,
+        criterion,
+        criterion_re_xyz,
+        criterion_re_label,
+        criterion_re_sp,
+        args['epoch'])
 
 def label2one_hot(labels, C=13):
     b, n = labels.shape
@@ -226,7 +235,15 @@ def split_data(points, nei, gt, th=100000):
         indexs.append(val)
     return pts, neis, gts, indexs
     
-def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, criterion_re_sp, epoch):
+def test(
+        test_loader,
+        model,
+        criterion,
+        criterion_re_xyz,
+        criterion_re_label,
+        criterion_re_sp,
+        epoch
+):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     
@@ -249,7 +266,17 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     cnt_sp_std = 0.
     torch.cuda.synchronize()
     start = time.time()
-    for i, (fname, edg_source, edg_target, is_transition, labels, objects, clouds, clouds_global, xyz) in enumerate(test_loader):
+    for i, (
+            fname,
+            edg_source,
+            edg_target,
+            is_transition,
+            labels,
+            objects,
+            clouds,
+            clouds_global,
+            xyz
+    ) in enumerate(test_loader):
         logger.info("")
         logger.info('name: {}'.format(fname[0]))
         # fname: file name
@@ -272,7 +299,11 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
         # th = 500000
         th = 450000
         if input.size(1) >= th:
-            inps, neis, gts, indexs = split_data(np.squeeze(input.numpy(), axis=0), clouds.numpy(), gt.numpy(), th)
+            inps, neis, gts, indexs = split_data(
+                np.squeeze(input.numpy(), axis=0),
+                clouds.numpy(),
+                gt.numpy(),
+                th)
             n = 0
             mov_n = 0   # number of points move
             mov_m = 0   # number of clusters move
@@ -289,10 +320,10 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                 s_gt = torch.from_numpy(gts[j]).cuda(non_blocking=True)
                 s_clouds = torch.from_numpy(neis[j]).cuda(non_blocking=True)
                 s_onehot_label = label2one_hot(s_gt, args['classes']) 
-                logger.info('s_input: {} {}'.format(s_input.size(), s_input.type()))
-                logger.info('s_gt: {} {}'.format(s_gt.size(), s_gt.type()))
-                logger.info('s_clouds: {} {}'.format(s_clouds.size(), s_clouds.type()))
-                logger.info('s_onehot_label: {} {}'.format(s_onehot_label.size(), s_onehot_label.type()))
+                # logger.info('s_input: {} {}'.format(s_input.size(), s_input.type()))
+                # logger.info('s_gt: {} {}'.format(s_gt.size(), s_gt.type()))
+                # logger.info('s_clouds: {} {}'.format(s_clouds.size(), s_clouds.type()))
+                # logger.info('s_onehot_label: {} {}'.format(s_onehot_label.size(), s_onehot_label.type()))
                 with torch.no_grad():
                     _, c_idx, c2p_idx, c2p_idx_base, output, rec_xyz, rec_label, fea_dist, p_fea, sp_pred_lab, sp_pseudo_lab, sp_pseudo_lab_onehot = model(
                         s_input, s_clouds.contiguous(), s_onehot_label, s_gt.unsqueeze(-1))
@@ -301,52 +332,52 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                 c_idx += mov_n
                 
                 all_c_idx = np.concatenate((all_c_idx, c_idx), axis=1) if all_c_idx.size else c_idx
-                logger.info('c_idx: {}'.format(c_idx.shape, np.max(c_idx)))
-                logger.info('mov_n: {}'.format(mov_n))
+                # logger.info('c_idx: {}'.format(c_idx.shape, np.max(c_idx)))
+                # logger.info('mov_n: {}'.format(mov_n))
             
                 c2p_idx = c2p_idx.cpu().numpy()             # 1 x n' x nc2p  val: 0,1,2,...,n'-1
                 c2p_idx += mov_n
                 all_c2p_idx[0, indexs[j], :] = c2p_idx
-                logger.info('c2p_idx: {} {}'.format(c2p_idx.shape, np.max(c2p_idx)))
-                logger.info('mov_n: {}'.format(mov_n))
+                # logger.info('c2p_idx: {} {}'.format(c2p_idx.shape, np.max(c2p_idx)))
+                # logger.info('mov_n: {}'.format(mov_n))
             
                 c2p_idx_base = c2p_idx_base.cpu().numpy()   # 1 x n' x nc2p  val: 0,1,2,...,m'-1
                 c2p_idx_base += mov_m
                 all_c2p_idx_base[0, indexs[j], :] = c2p_idx_base
-                logger.info('c2p_idx_base: {}'.format(c2p_idx_base.shape))
-                logger.info('mov_m: {}'.format(mov_m))
+                # logger.info('c2p_idx_base: {}'.format(c2p_idx_base.shape))
+                # logger.info('mov_m: {}'.format(mov_m))
 
                 output = output.detach().cpu().numpy()      # 1 x nclass x n
-                logger.info('output: {}'.format(output.shape))
+                # logger.info('output: {}'.format(output.shape))
                 all_output[0, indexs[j], :] = output.transpose((0, 2, 1))
             
                 rec_xyz = rec_xyz.detach().cpu().numpy()    # 1 x 3 x n
-                logger.info('rec_xyz: {}'.format(rec_xyz.shape))
+                # logger.info('rec_xyz: {}'.format(rec_xyz.shape))
                 all_rec_xyz[0, indexs[j], :] = rec_xyz.transpose((0, 2, 1))
             
                 rec_label = rec_label.detach().cpu().numpy()    # 1 x nclass x n
-                logger.info('rec_label: {}'.format(rec_label.shape))
+                # logger.info('rec_label: {}'.format(rec_label.shape))
                 all_rec_label[0, indexs[j], :] = rec_label.transpose((0, 2, 1))
 
 
                 fea_dist = fea_dist.detach().cpu().numpy()  # 1 x n' x nc2p
                 all_fea_dist[0, indexs[j], :] = fea_dist
-                logger.info('fea_dist: {}'.format(fea_dist.shape))
+                # logger.info('fea_dist: {}'.format(fea_dist.shape))
             
             
                 mov_n += inps[j].shape[0]   # number of points move
                 mov_m += c_idx.shape[1]   # number of clusters move
-            logger.info('n: {}'.format(n))
-            logger.info('all_c_idx: {}'.format(all_c_idx.shape))                    # 1 x m
-            logger.info('all_c2p_idx: {}'.format(all_c2p_idx.shape))                # 1 x n x nc2p
-            logger.info('all_c2p_idx_base: {}'.format(all_c2p_idx_base.shape))      # 1 x n x nc2p
+            # logger.info('n: {}'.format(n))
+            # logger.info('all_c_idx: {}'.format(all_c_idx.shape))                    # 1 x m
+            # logger.info('all_c2p_idx: {}'.format(all_c2p_idx.shape))                # 1 x n x nc2p
+            # logger.info('all_c2p_idx_base: {}'.format(all_c2p_idx_base.shape))      # 1 x n x nc2p
             all_output = all_output.transpose((0, 2, 1))            # 1 x n x nclass -> 1 x nclass x n
-            logger.info('all_output: {}'.format(all_output.shape))
+            # logger.info('all_output: {}'.format(all_output.shape))
             all_rec_xyz = all_rec_xyz.transpose((0, 2, 1))          # 1 x n x 3 -> 1 x 3 x n
-            logger.info('all_rec_xyz: {}'.format(all_rec_xyz.shape))                # 1 x 3 x n
+#             logger.info('all_rec_xyz: {}'.format(all_rec_xyz.shape))                # 1 x 3 x n
             all_rec_label = all_rec_label.transpose((0, 2, 1))      # 1 x n x nclass -> 1 x nclass x n
-            logger.info('all_rec_label: {}'.format(all_rec_label.shape))            # 1 x nclass x n
-            logger.info('all_fea_dist: {}'.format(all_fea_dist.shape))              # 1 x n x nc2p
+#             logger.info('all_rec_label: {}'.format(all_rec_label.shape))            # 1 x nclass x n
+#             logger.info('all_fea_dist: {}'.format(all_fea_dist.shape))              # 1 x n x nc2p
             
             gt = gt.cuda(non_blocking=True)
             onehot_label = label2one_hot(gt, args['classes'])
@@ -374,24 +405,24 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             all_rec_label = rec_label.detach().cpu().numpy()
             all_fea_dist = fea_dist.detach().cpu().numpy()
 
-            c = onehot_label.shape[1]
-            n = onehot_label.shape[2]
-            m = all_c_idx.shape[1]
-            logger.info(f"n={n}")
-            logger.info(f"m={m}")
-            logger.info(f"c={c}")
-            for k, v in dict(
-                    onehot_label=onehot_label,
-                    all_c_idx=all_c_idx,
-                    all_c2p_idx_base=all_c2p_idx_base,
-                    all_rec_label=all_rec_label,
-                    all_output=all_output,
-                    gt=gt,
-            ).items():
-                logger.info(f"{k:<20} | shape={v.shape} | min={v.min()} | max={v.max()}")
-
-            temp = all_rec_label.sum(axis=1).max()
-            logger.info(f"all_rec_label.sum(axis=1) | min={temp.min()} | max={temp.max()} | mean={temp.mean()}")
+            # c = onehot_label.shape[1]
+            # n = onehot_label.shape[2]
+            # m = all_c_idx.shape[1]
+            # logger.info(f"n={n}")
+            # logger.info(f"m={m}")
+            # logger.info(f"c={c}")
+            # for k, v in dict(
+            #         onehot_label=onehot_label,
+            #         all_c_idx=all_c_idx,
+            #         all_c2p_idx_base=all_c2p_idx_base,
+            #         all_rec_label=all_rec_label,
+            #         all_output=all_output,
+            #         gt=gt,
+            # ).items():
+            #     logger.info(f"{k:<20} | shape={v.shape} | min={v.min()} | max={v.max()}")
+            #
+            # temp = all_rec_label.sum(axis=1).max()
+            # logger.info(f"all_rec_label.sum(axis=1) | min={temp.min()} | max={temp.max()} | mean={temp.mean()}")
 
             input = input.cpu()
             gt = gt.cpu()

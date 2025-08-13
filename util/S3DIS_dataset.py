@@ -82,15 +82,15 @@ def create_s3dis_datasets(args, logger, test_seed_offset=0 ):
                 if fname.endswith(".h5"):
                     trainlist.append(path+fname)
     
-    print('train list: {}'.format(len(trainlist)))
+    # print('train list: {}'.format(len(trainlist)))
     path = os.path.join(args['data_root'], 'Area_{:d}_test/'.format(args['test_area']))
     
     # for fname in sorted(os.listdir(path),key=lambda x:os.stat(path + "/" + x).st_size):
     for fname in sorted(os.listdir(path),key=lambda x:os.stat(path + "/" + x).st_size, reverse=True):
         if fname.endswith(".h5"):
             testlist.append(path+fname)
-    print('test list: {}'.format(testlist))
-    print('test list: {}'.format(len(testlist)))
+    # print('test list: {}'.format(testlist))
+    # print('test list: {}'.format(len(testlist)))
     return tnt.dataset.ListDataset(trainlist,
                                    functools.partial(graph_loader, train=True, args=args, logger=logger, db_path=args['data_root'])),\
             tnt.dataset.ListDataset(testlist,
