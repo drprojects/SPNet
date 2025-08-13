@@ -6,6 +6,7 @@ dataset=$1
 exp_name=$2
 config=$3
 epoch=$4
+rate=$5
 
 
 exp_dir=exp/${dataset}/${exp_name}
@@ -25,4 +26,5 @@ $PYTHON tool/test.py \
     --config ${config} \
     --model_path ${model_path} \
     --epoch ${epoch} \
-    --save_folder ${save_folder} 2>&1 | tee ${model_log}/test-$epoch-$now.log
+    --save_folder ${save_folder} 2>&1 | tee ${model_log}/test-$epoch-$now.log \
+    --rate ${rate}

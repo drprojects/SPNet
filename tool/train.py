@@ -46,6 +46,7 @@ def get_parser():
     parser.add_argument('--model_path', type=str, default=None, required=True, help='save path')
     parser.add_argument('--weight', type=str, default=None, help='weight')
     parser.add_argument('--resume', type=str, default=None, help='resume')
+    parser.add_argument('--rate', type=float, default=0.0069, required=False, help='superpoint per point rate used for seeding FPS & k-means')
 
     args = parser.parse_args()
     cfg = yaml.safe_load(open(args.config, 'r'))
@@ -53,7 +54,8 @@ def get_parser():
     cfg["model_path"] = args.model_path
     cfg["weight"] = args.weight
     cfg["resume"] = args.resume
-    
+    cfg["rate"] = args.rate
+
     print("#"*20)
     print("Parameters:")
     for ky in cfg.keys():
