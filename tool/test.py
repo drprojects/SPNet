@@ -549,9 +549,9 @@ def test(
     logger.info(f"ASA: {asa * 100:0.1f}")
     logger.info(f"Oracle OA: {asa * 100:0.1f}")
     logger.info(f"Oracle mIoU: {oracle_miou * 100:0.1f}")
-    logger.info(f"Oracle IoU:")
-    for i, iou in enumerate(oracle_iou):
-        logger.info(f"    class {i:>3}: {iou * 100:0.1f}")
+    # logger.info(f"Oracle IoU:")
+    # for i, iou in enumerate(oracle_iou):
+    #     logger.info(f"    class {i:>3}: {iou * 100:0.1f}")
     logger.info(f"FPS / k-means rate: {model.rate}")
     logger.info(f"Total partition time WITHOUT SPG CLASSIF: {total_partition_and_inference_time:0.3f}")
 
