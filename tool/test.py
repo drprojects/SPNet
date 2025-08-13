@@ -374,9 +374,10 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             all_fea_dist = fea_dist.detach().cpu().numpy()
 
             m = all_c_idx.shape[1]
-            logger.info(f"{n=} | {m=}")
-            logger.info(f"{all_c_idx.shape=} | {all_c_idx.min()=} | {all_c_idx.max()=}")
-            
+            logger.info(f"n={n} | m={m}")
+            logger.info(f"all_c_idx.shape={all_c_idx.shape} | all_c_idx.min()={all_c_idx.min()} | all_c_idx.max()={all_c_idx.max()}")
+            logger.info(f"all_rec_label.shape={all_rec_label.shape} | all_c_idx.min()={all_rec_label.min()} | all_c_idx.max()={all_rec_label.max()}")
+
             input = input.cpu()
             gt = gt.cpu()
 
