@@ -16,7 +16,8 @@ sync_bn: False
 # ------------dataset setting----------------------
 data_name: 's3dis'
 classes: 13             # 13 cateogries for S3DIS (13 labeled)
-data_root: "/test/dataset/3d_datasets/features_supervision/"
+#data_root: "/test/dataset/3d_datasets/features_supervision/"
+data_root: "/home/darobe/wegner/darobe/data/s3dis/spnet/features_supervision/"
 names_path: "/test/work2020/superpoints/spnet/dataset/s3dis/s3dis_names.txt"
 
 num_point: 14999        # actually 14999+1=15000

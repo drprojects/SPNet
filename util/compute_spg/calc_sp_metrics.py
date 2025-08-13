@@ -94,7 +94,8 @@ for rs in reg_strenth:
 	for i in range(5,6):
 		#data_folder='/test/hl_cvpr2021/Results/S3DIS/SPG/Area_{}/rs_{}/'.format(i,rs)
 		data_folder='/all/hl_cvpr2021/Results/S3DIS/SPG/Area_{}/correct_rs_{}/'.format(i,rs)
-		fea_folder='/all/Dataset/S3DIS/features_supervision/Area_{}/'.format(i)
+		# fea_folder='/all/Dataset/S3DIS/features_supervision/Area_{}/'.format(i)
+		fea_folder='/home/darobe/wegner/darobe/data/s3dis/spnet/features_supervision/Area_{}/'.format(i)
 		#data_folder='/all/hl_cvpr2021/Results/S3DIS/SPG_norgb/Area_{}/rs_{}/'.format(i,rs)
 		#fea_folder='/all/Dataset/S3DIS/features_supervision/Area_{}/'.format(i)
 		# data_folder='/all/hl_cvpr2021/Results/S3DIS/SPG_norgb/Area_{}/rs_{}/'.format(i,rs)

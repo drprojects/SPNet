@@ -6,6 +6,38 @@ by Le Hui, Jia Yuan, Mingmei Cheng, Jin Xie, Xiaoya Zhang, and Jian Yang
 
 #####  This is a rough README.md, and we'll work through it. !!!
 
+# Damien installation notes
+
+```bash
+# module load gpu
+module load v100-32g
+module load cuda/12.2.1
+
+export LD_LIBRARY_PATH=/apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/cuda-12.2.1-762mhumcr6r5qnnzu4polhx65hthh6iv/lib64:$LD_LIBRARY_PATH
+
+
+conda create -n spnet python=3.6.6
+conda activate spnet
+
+pip install torch==1.4.0
+
+conda install -c anaconda boost -y
+conda install -c omnia eigen3 -y
+conda install eigen -y
+conda install -c r libiconv -y
+
+module load cmake
+cd libs/ply_c
+cmake . -DPYTHON_LIBRARY=$CONDA_PREFIX/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=$CONDA_PREFIX/include/python3.6m -DBOOST_INCLUDEDIR=$CONDA_PREFIX/include -DEIGEN3_INCLUDE_DIR=$CONDA_PREFIX/include/eigen3
+make
+cd ../../
+
+pip install tensorboardX h5py pyyaml pillow plyfile torchnet transforms3d scikit-learn tqdm 
+
+
+sh tool/sh_test.sh s3dis 20220121 config/spnet.yaml 850
+
+```
 
 
 ### Project Code
