@@ -11,6 +11,7 @@ by Le Hui, Jia Yuan, Mingmei Cheng, Jin Xie, Xiaoya Zhang, and Jian Yang
 ```bash
 # module load gpu
 module load v100-32g
+#module load a100
 module load cuda/12.2.1
 
 export LD_LIBRARY_PATH=/apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/cuda-12.2.1-762mhumcr6r5qnnzu4polhx65hthh6iv/lib64:$LD_LIBRARY_PATH
