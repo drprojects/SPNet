@@ -248,7 +248,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     cnt_sp_std = 0.
     torch.cuda.synchronize()
     start = time.time()
-    for i, (fname, edg_source, edg_target, is_transition, labels, objects, clouds, clouds_global, xyz) in enumerate(test_loader): 
+    for i, (fname, edg_source, edg_target, is_transition, labels, objects, clouds, clouds_global, xyz) in enumerate(test_loader):
+        logger.info("")
         logger.info('name: {}'.format(fname[0]))
         # fname: file name
         # edg_source: 1
@@ -292,7 +293,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
                 logger.info('s_clouds: {} {}'.format(s_clouds.size(), s_clouds.type()))
                 logger.info('s_onehot_label: {} {}'.format(s_onehot_label.size(), s_onehot_label.type()))
                 with torch.no_grad():
-                    _, c_idx, c2p_idx, c2p_idx_base, output, rec_xyz, rec_label, fea_dist, p_fea, sp_pred_lab, sp_pseudo_lab, sp_pseudo_lab_onehot = model(s_input, s_clouds.contiguous(), s_onehot_label, s_gt.unsqueeze(-1))
+                    _, c_idx, c2p_idx, c2p_idx_base, output, rec_xyz, rec_label, fea_dist, p_fea, sp_pred_lab, sp_pseudo_lab, sp_pseudo_lab_onehot = model(
+                        s_input, s_clouds.contiguous(), s_onehot_label, s_gt.unsqueeze(-1))
 
                 c_idx = c_idx.cpu().numpy()                 # 1 x m'         val: 0,1,2,...,n'-1
                 c_idx += mov_n
@@ -354,7 +356,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             onehot_label = label2one_hot(gt, args['classes'])
             clouds = clouds.cuda(non_blocking=True)
             with torch.no_grad():
-                spout, c_idx, c2p_idx, c2p_idx_base, output, rec_xyz, rec_label, fea_dist, p_fea, sp_pred_lab, sp_pseudo_lab, sp_pseudo_lab_onehot = model(input, clouds.contiguous(), onehot_label, gt.unsqueeze(-1))
+                spout, c_idx, c2p_idx, c2p_idx_base, output, rec_xyz, rec_label, fea_dist, p_fea, sp_pred_lab, sp_pseudo_lab, sp_pseudo_lab_onehot = model(
+                    input, clouds.contiguous(), onehot_label, gt.unsqueeze(-1))
             # ---------------- superpoint realted ------------------
             # spout:        b x n x nc2p
             # c_idx:        b x m           in 0,1,2,...,n
@@ -369,6 +372,10 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             all_rec_xyz = rec_xyz.detach().cpu().numpy()
             all_rec_label = rec_label.detach().cpu().numpy()
             all_fea_dist = fea_dist.detach().cpu().numpy()
+
+            m = all_c_idx.shape[1]
+            logger.info(f"{n=} | {m=}")
+            logger.info(f"{all_c_idx.shape=} | {all_c_idx.min()=} | {all_c_idx.max()=}")
             
             input = input.cpu()
             gt = gt.cpu()
