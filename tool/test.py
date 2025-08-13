@@ -240,6 +240,7 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     BR_meter = tnt.meter.AverageValueMeter()
     BP_meter = tnt.meter.AverageValueMeter()
     confusion_matrix = metrics.ConfusionMatrix(args['classes'])
+    confusion_matrix_oracle = metrics.ConfusionMatrix(args['classes'])
 
     model.eval()
     end = time.time()
@@ -368,8 +369,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             all_c_idx = c_idx.cpu().numpy()
             all_c2p_idx = c2p_idx.cpu().numpy()
             all_c2p_idx_base = c2p_idx_base.cpu().numpy()
-            all_output = output.detach().cpu().numpy()
-            all_rec_xyz = rec_xyz.detach().cpu().numpy()
+            all_output = output.detach().cpu().numpy()  # per-point features
+            all_rec_xyz = rec_xyz.detach().cpu().numpy()  # per-point sp-aggregated labels
             all_rec_label = rec_label.detach().cpu().numpy()
             all_fea_dist = fea_dist.detach().cpu().numpy()
 
@@ -397,6 +398,13 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
 
         cnt_sp += all_c_idx.shape[1]
         cnt_room += 1
+
+        # Accumulating superpoint-wise labels for later oracle metrics
+        # computation
+        confusion_matrix_oracle.count_predicted(
+            onehot_label.squeeze().argmax(axis=0),
+            all_rec_label.squeeze().argmax(axis=0),
+            number_of_added_elements=1)
       
         spout = all_fea_dist
         if gt.shape[-1] == 1:
@@ -508,11 +516,18 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
     total_partition_and_inference_time = time.time() - start
 
     asa = confusion_matrix.get_overall_accuracy()
+    miou = confusion_matrix.get_average_intersection_union()
     br = BR_meter.value()[0]
     bp = BP_meter.value()[0]
+    oracle_oa = confusion_matrix_oracle.get_overall_accuracy()
+    oracle_miou = confusion_matrix_oracle.get_average_intersection_union()
     logger.info('Train result at epoch [{}/{}]: ASA/BR/BP {:.4f}/{:.4f}/{:.4f}'.format(epoch+1, args['epochs'], asa, br, bp))
     logger.info('cnt_room: {} cnt_sp: {} avg_sp: {}'.format(cnt_room, cnt_sp, 1.*cnt_sp/cnt_room))
     logger.info('cnt_sp_act: {} avg_sp_act: {}'.format(cnt_sp_act, 1.*cnt_sp_act/cnt_room))
+    logger.info(f"ASA: {asa * 100:0.1f}")
+    logger.info(f"mIoU ???: {miou * 100:0.1f}")
+    logger.info(f"Oracle OA: {oracle_oa * 100:0.1f}")
+    logger.info(f"Oracle mIoU: {oracle_miou * 100:0.1f}")
     logger.info(f"FPS / k-means rate: {model.rate}")
     logger.info(f"Total partition time WITHOUT SPG CLASSIF: {total_partition_and_inference_time:0.3f}")
 

@@ -40,20 +40,46 @@ class Network(nn.Module):
 
         self.backbone= LPE_stn(input_channels=2, cfg=cfg)
 
-        self.learn_SLIC_calc_1 = learn_SLIC_calc_v1_new(ch_wc2p_fea=[64, 16, 16], ch_wc2p_xyz=[3, 16, 16], ch_mlp=[64, 16, 16],
-                            bn=True, use_xyz=self.use_xyz, use_softmax=self.use_softmax, use_norm=self.use_norm)
+        self.learn_SLIC_calc_1 = learn_SLIC_calc_v1_new(
+            ch_wc2p_fea=[64, 16, 16],
+            ch_wc2p_xyz=[3, 16, 16],
+            ch_mlp=[64, 16, 16],
+            bn=True,
+            use_xyz=self.use_xyz,
+            use_softmax=self.use_softmax,
+            use_norm=self.use_norm)
 
-        self.learn_SLIC_calc_2 = learn_SLIC_calc_v1_new(ch_wc2p_fea=[64, 16, 16], ch_wc2p_xyz=[3, 16, 16], ch_mlp=[64, 16, 16],
-                            bn=True, use_xyz=self.use_xyz, use_softmax=self.use_softmax, use_norm=self.use_norm)
+        self.learn_SLIC_calc_2 = learn_SLIC_calc_v1_new(
+            ch_wc2p_fea=[64, 16, 16],
+            ch_wc2p_xyz=[3, 16, 16],
+            ch_mlp=[64, 16, 16],
+            bn=True,
+            use_xyz=self.use_xyz,
+            use_softmax=self.use_softmax,
+            use_norm=self.use_norm)
 
-        self.learn_SLIC_calc_3 = learn_SLIC_calc_v1_new(ch_wc2p_fea=[64, 16, 16], ch_wc2p_xyz=[3, 16, 16], ch_mlp=[64, 16, 16],
-                            bn=True, use_xyz=self.use_xyz, use_softmax=self.use_softmax, use_norm=self.use_norm)
+        self.learn_SLIC_calc_3 = learn_SLIC_calc_v1_new(
+            ch_wc2p_fea=[64, 16, 16],
+            ch_wc2p_xyz=[3, 16, 16],
+            ch_mlp=[64, 16, 16],
+            bn=True,
+            use_xyz=self.use_xyz,
+            use_softmax=self.use_softmax,
+            use_norm=self.use_norm)
 
-        self.learn_SLIC_calc_4 = learn_SLIC_calc_v1_new(ch_wc2p_fea=[64, 16, 16], ch_wc2p_xyz=[3, 16, 16], ch_mlp=[64, 16, 16],
-                            bn=True, use_xyz=self.use_xyz, use_softmax=self.use_softmax, use_norm=self.use_norm, last=True)
+        self.learn_SLIC_calc_4 = learn_SLIC_calc_v1_new(
+            ch_wc2p_fea=[64, 16, 16],
+            ch_wc2p_xyz=[3, 16, 16],
+            ch_mlp=[64, 16, 16],
+            bn=True,
+            use_xyz=self.use_xyz,
+            use_softmax=self.use_softmax,
+            use_norm=self.use_norm,
+            last=True)
 
-        self.mlp = nn.Sequential(pt_util.SharedMLP_1d([64, 64], bn=True),
-                                 pt_util.SharedMLP_1d([64, self.classes], activation=None))
+        self.mlp = nn.Sequential(
+            pt_util.SharedMLP_1d([64, 64], bn=True),
+            pt_util.SharedMLP_1d([64, self.classes], activation=None))
         
     def _break_up_pc(self, pc):
         xyz = pc[..., 0:3].contiguous()
@@ -67,7 +93,13 @@ class Network(nn.Module):
         target = one_hot.scatter_(1, labels.type(torch.long).data, 1)   # retuqire long type
         return target.type(torch.float32)
 
-    def forward(self, pointcloud: torch.cuda.FloatTensor, clouds_knn, onehot_label=None, label=None):
+    def forward(
+            self,
+            pointcloud: torch.cuda.FloatTensor,
+            clouds_knn,
+            onehot_label=None,
+            label=None
+    ):
         # pointcloud: b x n x (3+c)
         # clouds_knn: bn x 6 x 20
         # onehot_label: b x c x n
@@ -99,12 +131,21 @@ class Network(nn.Module):
         # c2p_idx: near clusters to each point
         # (b x m x 3, b x m, b x n x 3) -> b x n x nc2p, b x n x nc2p
         # nc2p == 6
-        c2p_idx, c2p_idx_abs = pointops.knnquerycluster(self.nc2p, cluster_xyz, cluster_idx, xyz)
+        c2p_idx, c2p_idx_abs = pointops.knnquerycluster(
+            self.nc2p,
+            cluster_xyz,
+            cluster_idx,
+            xyz)
         # c2p_idx: b x n x 6
         # c2p_idx_abs: b x n x 6
         
         # association matrix
-        asso_matrix, sp_nei_cnt, sp_lab = pointops.assomatrixpluslabel(self.nc2p, c2p_idx, label.int(), cluster_idx.unsqueeze(-1), self.classes)
+        asso_matrix, sp_nei_cnt, sp_lab = pointops.assomatrixpluslabel(
+            self.nc2p,
+            c2p_idx,
+            label.int(),
+            cluster_idx.unsqueeze(-1),
+            self.classes)
         asso_matrix = asso_matrix.float()
         sp_nei_cnt = sp_nei_cnt.float()
         # asso_matrix: b x m x n
@@ -112,10 +153,15 @@ class Network(nn.Module):
         # sp_lab: b x m x class
         
         # ----------------------- embedding ----------------------------
-        clouds_knn = clouds_knn.view(batch_size, num_points, clouds_knn.size(1), clouds_knn.size(2)).contiguous()
+        clouds_knn = clouds_knn.view(
+            batch_size, num_points, clouds_knn.size(1), clouds_knn.size(2)
+        ).contiguous()
         clouds_knn = clouds_knn.transpose(1, 2).contiguous()
         
-        embedding = self.backbone(clouds_knn, clouds_global.transpose(1, 2).contiguous())
+        embedding = self.backbone(
+            clouds_knn,
+            clouds_global.transpose(1, 2).contiguous()
+        )
         # embedding: b x 32 x n
         
         p_fea = embedding.transpose(1, 2).contiguous()
@@ -127,16 +173,44 @@ class Network(nn.Module):
         # sp_fea: b x m x 32         initial superpoints features
 
         # c2p_idx: b x n x 6
-        sp_fea, cluster_xyz = self.learn_SLIC_calc_1(sp_fea, cluster_xyz, p_fea, xyz, c2p_idx_abs, c2p_idx, cluster_idx)
+        sp_fea, cluster_xyz = self.learn_SLIC_calc_1(
+            sp_fea,
+            cluster_xyz,
+            p_fea,
+            xyz,
+            c2p_idx_abs,
+            c2p_idx,
+            cluster_idx)
         # sp_fea: b x m x c
 
-        sp_fea, cluster_xyz = self.learn_SLIC_calc_2(sp_fea, cluster_xyz, p_fea, xyz, c2p_idx_abs, c2p_idx, cluster_idx)
+        sp_fea, cluster_xyz = self.learn_SLIC_calc_2(
+            sp_fea,
+            cluster_xyz,
+            p_fea,
+            xyz,
+            c2p_idx_abs,
+            c2p_idx,
+            cluster_idx)
         # sp_fea: b x m x c
 
-        sp_fea, cluster_xyz = self.learn_SLIC_calc_3(sp_fea, cluster_xyz, p_fea, xyz, c2p_idx_abs, c2p_idx, cluster_idx)
+        sp_fea, cluster_xyz = self.learn_SLIC_calc_3(
+            sp_fea,
+            cluster_xyz,
+            p_fea,
+            xyz,
+            c2p_idx_abs,
+            c2p_idx,
+            cluster_idx)
         # sp_fea: b x m x c
 
-        fea_dist, sp_fea, cluster_xyz = self.learn_SLIC_calc_4(sp_fea, cluster_xyz, p_fea, xyz, c2p_idx_abs, c2p_idx, cluster_idx)
+        fea_dist, sp_fea, cluster_xyz = self.learn_SLIC_calc_4(
+            sp_fea,
+            cluster_xyz,
+            p_fea,
+            xyz,
+            c2p_idx_abs,
+            c2p_idx,
+            cluster_idx)
         # sp_fea: b x m x c
         
         final_asso = fea_dist
@@ -150,17 +224,29 @@ class Network(nn.Module):
             # p2sp_idx: b x n
 
             # (b x 3 x m,  b x n, b x n x 6) -> (b x 3 x n)
-            re_p_xyz = pointops.gathering_cluster(sp_xyz.transpose(1, 2).contiguous(), p2sp_idx.int(), c2p_idx_abs)
+            re_p_xyz = pointops.gathering_cluster(
+                sp_xyz.transpose(1, 2).contiguous(),
+                p2sp_idx.int(),
+                c2p_idx_abs)
             # re_p_xyz: b x 3 x n
             # (b, c, n), idx : (b, m) tensor, idx_3d: (b, m, k)
 
             # ------------------------------ reconstruct label ----------------------------
             # onehot_label: b x classes x n
-            sp_label = calc_sp_fea(c2p_idx, final_asso, onehot_label.transpose(1, 2).contiguous(), c2p_idx_abs, self.nc2p, c2p_idx, cluster_idx)
+            sp_label = calc_sp_fea(
+                c2p_idx,
+                final_asso,
+                onehot_label.transpose(1, 2).contiguous(),
+                c2p_idx_abs,
+                self.nc2p,
+                c2p_idx,
+                cluster_idx)
             # sp_label: b x m x classes
             
             sp_pseudo_lab = torch.argmax(sp_lab, dim=2, keepdim=False)  # b x m
-            sp_pseudo_lab_onehot = self.label2one_hot(sp_pseudo_lab, self.classes)    # b x class x m
+            sp_pseudo_lab_onehot = self.label2one_hot(
+                sp_pseudo_lab,
+                self.classes)    # b x class x m
             # c2p_idx: b x n x 6
             # final_asso: b x n x 6
             # f: b x n x m
@@ -169,13 +255,31 @@ class Network(nn.Module):
             # re_p_label: b x n x classes
             
             # (b, classes, m), (b, n, 6) -> b x classes x n x 6
-            c2p_label = pointops.grouping(sp_label.transpose(1, 2).contiguous(), c2p_idx_abs)
+            c2p_label = pointops.grouping(
+                sp_label.transpose(1, 2).contiguous(),
+                c2p_idx_abs)
             # (b, classes, m), (b, n, 6) -> b x classes x n x 6
             
-            re_p_label = torch.sum(c2p_label * final_asso.unsqueeze(1), dim=-1, keepdim=False)
+            re_p_label = torch.sum(
+                c2p_label * final_asso.unsqueeze(1),
+                dim=-1,
+                keepdim=False)
             # re_p_label: b x classes x n
         else:
             re_p_xyz = None
             re_p_label = None
 
-        return final_asso, cluster_idx, c2p_idx, c2p_idx_abs, out, re_p_xyz, re_p_label, fea_dist, p_fea, sp_label.transpose(1, 2).contiguous(), sp_pseudo_lab, sp_pseudo_lab_onehot
+        return (
+            final_asso,
+            cluster_idx,
+            c2p_idx,
+            c2p_idx_abs,
+            out,
+            re_p_xyz,
+            re_p_label,
+            fea_dist,
+            p_fea,
+            sp_label.transpose(1, 2).contiguous(),
+            sp_pseudo_lab,
+            sp_pseudo_lab_onehot
+        )
