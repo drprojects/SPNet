@@ -46,6 +46,63 @@ done
 
 ```
 
+```
+Train result at epoch [851/5000]: ASA/BR/BP 0.4767/51.3566/11.6720
+cnt_room: 68 cnt_sp: 896 avg_sp: 13.176470588235293
+cnt_sp_act: 896 avg_sp_act: 13.176470588235293
+ASA: 47.7
+Oracle OA: 47.7
+Oracle mIoU: 14.5
+FPS / k-means rate: 0.0001
+Total partition time WITHOUT SPG CLASSIF: 144.581
+
+Train result at epoch [851/5000]: ASA/BR/BP 0.8025/65.9005/13.4759
+cnt_room: 68 cnt_sp: 4615 avg_sp: 67.86764705882354
+cnt_sp_act: 4603 avg_sp_act: 67.69117647058823
+ASA: 80.2
+Oracle OA: 80.2
+Oracle mIoU: 49.3
+FPS / k-means rate: 0.0005
+Total partition time WITHOUT SPG CLASSIF: 132.853
+
+Train result at epoch [851/5000]: ASA/BR/BP 0.8729/68.8595/13.9309
+cnt_room: 68 cnt_sp: 9263 avg_sp: 136.22058823529412
+cnt_sp_act: 9174 avg_sp_act: 134.91176470588235
+ASA: 87.3
+Oracle OA: 87.3
+Oracle mIoU: 63.5
+FPS / k-means rate: 0.001
+Total partition time WITHOUT SPG CLASSIF: 125.821
+
+Train result at epoch [851/5000]: ASA/BR/BP 0.9575/79.1453/13.6364
+cnt_room: 68 cnt_sp: 46460 avg_sp: 683.2352941176471
+cnt_sp_act: 45593 avg_sp_act: 670.4852941176471
+ASA: 95.7
+Oracle OA: 95.7
+Oracle mIoU: 86.8
+FPS / k-means rate: 0.005
+Total partition time WITHOUT SPG CLASSIF: 122.797
+
+Train result at epoch [851/5000]: ASA/BR/BP 0.9654/82.1226/13.1064
+cnt_room: 68 cnt_sp: 65064 avg_sp: 956.8235294117648
+cnt_sp_act: 63581 avg_sp_act: 935.0147058823529
+ASA: 96.5
+Oracle OA: 96.5
+Oracle mIoU: 89.7
+FPS / k-means rate: 0.007
+Total partition time WITHOUT SPG CLASSIF: 127.976
+
+Train result at epoch [851/5000]: ASA/BR/BP 0.9716/84.7251/12.4060
+cnt_room: 68 cnt_sp: 92959 avg_sp: 1367.0441176470588
+cnt_sp_act: 90576 avg_sp_act: 1332.0
+ASA: 97.2
+Oracle OA: 97.2
+Oracle mIoU: 91.6
+FPS / k-means rate: 0.01
+Total partition time WITHOUT SPG CLASSIF: 128.834
+
+```
+
 
 ### Project Code
 
