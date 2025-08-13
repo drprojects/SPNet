@@ -257,8 +257,6 @@ def test(
     BR_meter = tnt.meter.AverageValueMeter()
     BP_meter = tnt.meter.AverageValueMeter()
     confusion_matrix = metrics.ConfusionMatrix(number_of_labels=args['classes'])
-    confusion_matrix_oracle = metrics.ConfusionMatrix(number_of_labels=args['classes'])
-
     model.eval()
     end = time.time()
     max_iter = 1 * len(test_loader)
@@ -429,13 +427,6 @@ def test(
 
         cnt_sp += all_c_idx.shape[1]
         cnt_room += 1
-
-        # Accumulating superpoint-wise labels for later oracle metrics
-        # computation
-        confusion_matrix_oracle.count_predicted(
-            onehot_label.cpu().numpy().squeeze().argmax(axis=0),
-            all_rec_label.squeeze().argmax(axis=0),
-            number_of_added_elements=1)
       
         spout = all_fea_dist
         if gt.shape[-1] == 1:
@@ -560,7 +551,6 @@ def test(
     logger.info(f"Oracle IoU:")
     for i, iou in enumerate(oracle_iou):
         logger.info(f"    class {i:>3}: {iou * 100:0.1f}")
-    logger.info(f"Oracle Confusion matrix:\n{confusion_matrix_oracle.confusion_matrix}")
     logger.info(f"FPS / k-means rate: {model.rate}")
     logger.info(f"Total partition time WITHOUT SPG CLASSIF: {total_partition_and_inference_time:0.3f}")
 
