@@ -376,7 +376,9 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             c = onehot_label.shape[1]
             n = onehot_label.shape[2]
             m = all_c_idx.shape[1]
-            logger.info(f"n={n} | m={m} | c={c}")
+            logger.info(f"n={n}")
+            logger.info(f"m={m}")
+            logger.info(f"c={c}")
             for k, v in dict(
                     onehot_label=onehot_label,
                     all_c_idx=all_c_idx,
@@ -387,8 +389,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
             ).items():
                 logger.info(f"{k:<20} | shape={v.shape} | min={v.min()} | max={v.max()}")
 
-            temp = all_rec_label.sum(dim=1).max()
-            logger.info(f"all_rec_label.sum(dim=1) | min={temp.min()} | max={temp.max()} | mean={temp.mean()}")
+            temp = all_rec_label.sum(axis=1).max()
+            logger.info(f"all_rec_label.sum(axis=1) | min={temp.min()} | max={temp.max()} | mean={temp.mean()}")
 
             input = input.cpu()
             gt = gt.cpu()
