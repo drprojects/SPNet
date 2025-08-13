@@ -401,6 +401,8 @@ def test(test_loader, model, criterion, criterion_re_xyz, criterion_re_label, cr
 
         # Accumulating superpoint-wise labels for later oracle metrics
         # computation
+        logger.info(f"onehot_label to CM: {onehot_label.cpu().numpy().squeeze().argmax(axis=0).shape}")
+        logger.info(f"all_rec_label to CM: {all_rec_label.squeeze().argmax(axis=0).shape}")
         confusion_matrix_oracle.count_predicted(
             onehot_label.cpu().numpy().squeeze().argmax(axis=0),
             all_rec_label.squeeze().argmax(axis=0),
