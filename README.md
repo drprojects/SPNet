@@ -21,6 +21,9 @@ conda create -n spnet python=3.6.6
 conda activate spnet
 
 pip install torch==1.4.0
+#torch               1.4.0
+#torchnet            0.0.4
+
 
 conda install -c anaconda boost -y
 conda install -c omnia eigen3 -y
@@ -28,9 +31,13 @@ conda install eigen -y
 conda install -c r libiconv -y
 
 module load cmake
-cd libs/ply_c
+cd lib/ply_c
 cmake . -DPYTHON_LIBRARY=$CONDA_PREFIX/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=$CONDA_PREFIX/include/python3.6m -DBOOST_INCLUDEDIR=$CONDA_PREFIX/include -DEIGEN3_INCLUDE_DIR=$CONDA_PREFIX/include/eigen3
 make
+cd ../../
+
+cd lib/pointops
+python setup.py install
 cd ../../
 
 pip install tensorboardX h5py pyyaml pillow plyfile torchnet transforms3d scikit-learn tqdm 
@@ -45,7 +52,54 @@ do
     sh tool/sh_test.sh s3dis 20220121 config/spnet.yaml 850 $RATE
 done
 
+
+for RATE in 0.008 0.009 0.02 0.03 0.04
+do
+    sh tool/sh_test.sh s3dis 20220121 config/spnet.yaml 850 $RATE
+done
+
 ```
+
+Installation with more recent python version to be able to run on more 
+recent torch, to be able to run on A100.
+
+```bash
+# module load gpu
+#module load v100-32g
+module load a100
+module load cuda/12.2.1
+
+export LD_LIBRARY_PATH=/apps/opt/spack/linux-ubuntu20.04-x86_64/gcc-9.3.0/cuda-12.2.1-762mhumcr6r5qnnzu4polhx65hthh6iv/lib64:$LD_LIBRARY_PATH
+
+conda create -n spnet_39 python=3.9 -y
+conda activate spnet_39
+
+pip install torch==2.7.1
+#torch               1.4.0
+#torchnet            0.0.4
+
+conda install -c anaconda boost -y
+conda install -c omnia eigen3 -y
+conda install eigen -y
+conda install -c r libiconv -y
+
+module load cmake
+cd lib/ply_c
+cmake . -DPYTHON_LIBRARY=$CONDA_PREFIX/lib/libpython3.9.so -DPYTHON_INCLUDE_DIR=$CONDA_PREFIX/include/python3.9 -DBOOST_INCLUDEDIR=$CONDA_PREFIX/include -DEIGEN3_INCLUDE_DIR=$CONDA_PREFIX/include/eigen3
+make
+cd ../../
+
+# THIS IS THE INSTALLATION PAIN POINT. I CANNOT COMPILE THIS WITH 
+# TORCH>=2; ONLY 1.4.0. tHIS PREVENTS USING MORE RECENT GPU ARCHITECTURES 
+# (eg A100/H100). SO I AM STUCK WITH MEMORY ERRORS WHEN RUNNING INTO 
+# MEMORY ISSUES...
+cd lib/pointops
+python setup.py install
+cd ../../
+
+pip install tensorboardX h5py pyyaml pillow plyfile torchnet transforms3d scikit-learn tqdm 
+```
+
 
 ```
 Train result at epoch [851/5000]: ASA/BR/BP 0.4767/51.3566/11.6720
