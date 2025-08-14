@@ -2,3 +2,8 @@
 exp
 core
 __pycache__
+lib/ply_c/CMakeFiles/
+lib/ply_c/FindNumPy.cmake
+lib/pointops/build/
+lib/pointops/dist/
+lib/pointops/pointops.egg-info/
