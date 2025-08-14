@@ -147,6 +147,24 @@ Oracle mIoU: 89.7
 FPS / k-means rate: 0.007
 Total partition time WITHOUT SPG CLASSIF: 127.976
 
+Train result at epoch [851/5000]: ASA/BR/BP 0.9680/83.1743/12.8688
+cnt_room: 68 cnt_sp: 74354 avg_sp: 1093.4411764705883
+cnt_sp_act: 72530 avg_sp_act: 1066.6176470588234
+ASA: 96.8
+Oracle OA: 96.8
+Oracle mIoU: 90.5
+FPS / k-means rate: 0.008
+Total partition time WITHOUT SPG CLASSIF: 133.736
+
+Train result at epoch [851/5000]: ASA/BR/BP 0.9702/84.0403/12.6392
+cnt_room: 68 cnt_sp: 83656 avg_sp: 1230.235294117647
+cnt_sp_act: 81566 avg_sp_act: 1199.5
+ASA: 97.0
+Oracle OA: 97.0
+Oracle mIoU: 91.1
+FPS / k-means rate: 0.009
+Total partition time WITHOUT SPG CLASSIF: 136.768
+
 Train result at epoch [851/5000]: ASA/BR/BP 0.9716/84.7251/12.4060
 cnt_room: 68 cnt_sp: 92959 avg_sp: 1367.0441176470588
 cnt_sp_act: 90576 avg_sp_act: 1332.0
